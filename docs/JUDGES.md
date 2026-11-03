@@ -1,23 +1,26 @@
-# Judge reproduction — stub
+# Judge reproduction — autonomous local hand-off
 
-TODO(tranche 2): verify this walkthrough on a clean local setup and add real
-screenshots. The approximate 15-minute target assumes prerequisites installed.
+Prerequisites: a Mac, Docker, Switch Console v0.40.1, a signed-in Codex provider,
+Python 3.11+ with timezone data, and the local repository. Approximate 15-minute
+walkthrough; clean installation time has not been measured.
 
-Prerequisites: a Mac, Docker, Switch Console v0.40.1, a Codex account signed in,
-Python 3.11+ with timezone data, and the repository available locally.
+1. Follow README installation; run ruff and pytest (41 tests).
+2. Import the YAML Group with `team=ovx`, local sibling agent directories and
+   bundled Mattermost. Keep exactly two agents, Auto ON and Bypass OFF. Inspect
+   rendered instructions: scout writes only its own facts.json; checker reads
+   ../ovx-scout/facts.json and writes only its own BRIEF.md. Install keepkill in
+   the checker environment. Do not widen permissions.
+3. Verify Docker and Mattermost healthy. Paste one synthetic opportunity in
+   intake with a unique run marker, source timezone and Europe/Paris team time.
+   Observe the scout's validated JSON, its actual file write, and addressed
+   hand-off to review. No human saves the facts file.
+4. Observe checker check, deadline conversion and BRIEF.md. It must read the
+   current scout file; absent or stale input blocks processing. It asks only
+   for the team IANA timezone if that has not already been supplied.
+5. Read the real brief and its blank Decision field. The human can then choose
+   KEEP or KILL and record it in Decisions. The smoke stops before that choice.
 
-1. Minutes 0–3: follow README installation; run ruff and pytest.
-2. Minutes 3–7: Console → Add server local → Codex → Templates → import YAML;
-   use `team=ovx` and bundled Mattermost. Set Auto ON and Bypass OFF.
-3. Minutes 7–10: open Mattermost; paste a synthetic opportunity in intake.
-   Observe the scout's facts and addressed hand-off to review.
-4. Minutes 10–13: human saves facts.json in the checker's own directory and
-   confirms Europe/Paris. Observe check, deadline conversion and BRIEF.md.
-5. Minutes 13–15: human reviews the brief, chooses KEEP or KILL, and records
-   the decision in the room Decisions. Repeat with a missing deadline if time.
-
-Known limits: no live Switch run verified in tranche 1; no URL verification,
-scraping, automatic fact-file write, automatic decision or submission. The
-human file hand-off is intentional because the checker's only allowed write
-is BRIEF.md. Provider access and local permissions require human setup.
-The 15-minute estimate is TODO(tranche 2), not a measured result.
+Measured Smoke 2 outcome and screenshots: ../../logs/2026-11-03T2108/RAPPORT.md.
+No URL verification, scraping, automatic decision or submission. Unknowns stay
+unknown; silence about AI is not permission. The write limits are instructions,
+not file-level ACLs. Login blocks the smoke; missing scout write means FAIL.
