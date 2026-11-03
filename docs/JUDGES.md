@@ -28,7 +28,8 @@ claims about the latest releases. Clean installation time has not been measured.
    ```
 
    Expect ruff success and at least 57 passing tests. Tests cover UTC elapsed
-   hours across DST, rejected ambiguous/nonexistent times and a pending human gate.
+   hours across DST, rejected ambiguous/nonexistent times, labelled team
+   timezone and capacity, and a pending human gate.
 
 4. **Replay the business case without Switch first.**
 
@@ -37,9 +38,10 @@ claims about the latest releases. Clean installation time has not been measured.
    .venv/bin/keepkill brief fixtures/operations-rfp.json -o BRIEF.md --to America/Toronto --now '2026-11-03 16:10'
    ```
 
-   Inspect `BRIEF.md`: Paris `17:00` → Toronto `11:00`, `66.83` hours,
-   `Gate: PENDING HUMAN KEEP/KILL`, and blank `Decision:`. This is an explicitly
-   fixed-clock replay. [Expected output](../evidence/sample-brief/BRIEF.md).
+   Inspect `BRIEF.md`: Paris `17:00` → Toronto `11:00`, `66.83` elapsed hours,
+   labelled team timezone `America/Toronto`, bid effort `6` hours, capacity
+   `12` hours, `Gate: PENDING HUMAN KEEP/KILL`, and blank `Decision:`. This is
+   an explicitly fixed-clock replay. [Expected output](../evidence/sample-brief/BRIEF.md).
 
 5. **Prepare Switch.** Start Docker and a local Switch Console server with
    bundled Mattermost; confirm it is healthy. Configure the Codex provider with
@@ -61,7 +63,8 @@ claims about the latest releases. Clean installation time has not been measured.
 
 7. **Send one intake.** Paste `fixtures/operations-rfp-source.txt` into
    `ovx-intake`. Change `RFP-DEMO-1103` to a unique marker if repeated. It supplies
-   source `Europe/Paris` and team `America/Toronto`. For a live opportunity,
+   source `Europe/Paris`, team `America/Toronto`, bid effort `6` hours and
+   capacity `12` hours. For a live opportunity,
    use the current clock: do not pass the replay's `--now`. If this fictional
    deadline has passed, the correct result is negative hours and `EXPIRED`.
    Observe the scout's actual write tool result before its addressed handoff
@@ -69,8 +72,9 @@ claims about the latest releases. Clean installation time has not been measured.
 
 8. **Inspect the checker run.** It must verify the current marker and URL in
    `../ovx-scout/facts.json`, run `check`, `deadline` and `brief`, and show
-   source/team IANA timezones, reference time, hours remaining and cautions in
-   its real `BRIEF.md`. Missing or stale files block the handoff. No human or
+   source/team IANA timezones, reference time, hours remaining, labelled bid
+   effort and capacity when present, and cautions in its real `BRIEF.md`.
+   Missing or stale files block the handoff. No human or
    orchestration deposits the JSON. Missing facts remain unknown; source
    silence about AI is not permission. `check` exit 2 is a visible validation
    result, not an approval. Failed scout write means FAIL; login blocks must

@@ -11,7 +11,7 @@
 | Demo type | Silent montage of sanitized historical RUN 2108 screenshots plus a fixed-clock CLI example; not a live Switch recording |
 | Public demo video URL | TODO — Melwin: choose hosting and upload after approval; no YouTube/Drive upload performed |
 | Historical Switch evidence | [RUN 2108](../evidence/run2108/RAPPORT.md), one autonomous scout/checker handoff |
-| Enhanced product evidence | [Generated business brief](../evidence/sample-brief/BRIEF.md), timestamped hours and pending human gate |
+| Enhanced product evidence | [Generated business brief](../evidence/sample-brief/BRIEF.md), timestamped hours, labelled team timezone and capacity, and a pending human gate |
 | CI | [Workflow and actual runs](https://github.com/Ovarixia/switch-keepkill-desk/actions/workflows/ci.yml); final run status is recorded in the delivery report |
 | Registration confirmation | TODO — Melwin: register/confirm participation with the organizer |
 | Contest submission | TODO — Melwin: review final assets and submit to the chosen contest portal |

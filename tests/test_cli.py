@@ -7,6 +7,8 @@ import pytest
 from keepkill_desk.cli import check_facts, local_time, main, render_brief
 
 ROOT = Path(__file__).resolve().parents[1]
+OPTIONAL_FACTS = {"team_tz", "bid_effort_hours", "capacity_hours"}
+HOUR_FACTS = {"bid_effort_hours", "capacity_hours"}
 
 
 @pytest.fixture
@@ -261,13 +263,20 @@ def test_schema_and_fixtures(facts):
     schema = json.loads((ROOT / "schema/facts.schema.json").read_text())
     assert schema["type"] == "object"
     assert schema["additionalProperties"] is False
-    assert set(schema["required"]) == set(schema["properties"]) == set(facts)
+    assert set(schema["required"]) == set(facts)
+    assert set(schema["properties"]) == set(schema["required"]) | OPTIONAL_FACTS
     assert schema["properties"]["ai_tools_allowed"]["enum"] == ["yes", "no", "silent"]
     for path in (ROOT / "fixtures").glob("*.json"):
         example = json.loads(path.read_text())
-        assert set(example) == set(schema["required"])
+        assert set(schema["required"]) <= set(example) <= set(schema["properties"])
         for field, value in example.items():
-            assert isinstance(value, list if field == "deliverables" else str)
+            if field == "deliverables":
+                assert isinstance(value, list)
+            elif field in HOUR_FACTS:
+                assert type(value) in (int, float)
+                assert value >= 0
+            else:
+                assert isinstance(value, str)
 
 
 @pytest.mark.parametrize(
@@ -365,3 +374,172 @@ def test_complete_facts_cannot_supply_human_decision(facts):
     assert "Decision: KEEP" not in result
     assert "Decision: KILL" not in result
     assert "Gate: PENDING HUMAN KEEP/KILL" in result
+
+
+def _decision_is_blank(result: str) -> None:
+    assert "Gate: PENDING HUMAN KEEP/KILL" in result
+    assert "Decision:\n\n" in result
+    assert "Decision: KEEP" not in result
+    assert "Decision: KILL" not in result
+    for line in result.splitlines():
+        if line.startswith("Decision:"):
+            assert line == "Decision:"
+
+
+def test_schema_exposes_optional_team_and_capacity_facts(facts):
+    schema = json.loads((ROOT / "schema/facts.schema.json").read_text())
+    assert schema["additionalProperties"] is False
+    assert set(schema["required"]) == set(facts)
+    assert set(schema["properties"]) == set(schema["required"]) | OPTIONAL_FACTS
+    assert schema["properties"]["team_tz"]["type"] == "string"
+    assert schema["properties"]["bid_effort_hours"]["type"] == "number"
+    assert schema["properties"]["bid_effort_hours"]["minimum"] == 0
+    assert schema["properties"]["capacity_hours"]["type"] == "number"
+    assert schema["properties"]["capacity_hours"]["minimum"] == 0
+    for field in OPTIONAL_FACTS:
+        assert field not in schema["required"]
+
+
+def test_operations_source_names_the_capacity_facts():
+    source = (ROOT / "fixtures/operations-rfp-source.txt").read_text()
+    assert "Deadline timezone: Europe/Paris" in source
+    assert "Team timezone (team_tz): America/Toronto" in source
+    assert "Bid effort hours (bid_effort_hours): 6" in source
+    assert "Capacity hours (capacity_hours): 12" in source
+
+
+def test_operations_rfp_labels_capacity_and_leaves_decision_blank(tmp_path, capsys):
+    facts_path = ROOT / "fixtures/operations-rfp.json"
+    facts = json.loads(facts_path.read_text())
+    assert facts["deadline_tz"] == "Europe/Paris"
+    assert facts["team_tz"] == "America/Toronto"
+    assert facts["bid_effort_hours"] == 6
+    assert facts["capacity_hours"] == 12
+    assert main(["check", str(facts_path)]) == 0
+    check_out = capsys.readouterr().out
+    assert check_out.startswith("Complete:")
+    assert "KEEP" not in check_out
+    assert "KILL" not in check_out
+    output = tmp_path / "BRIEF.md"
+    assert (
+        main(
+            [
+                "brief",
+                str(facts_path),
+                "-o",
+                str(output),
+                "--to",
+                "America/Toronto",
+                "--now",
+                "2026-11-03 16:10",
+            ]
+        )
+        == 0
+    )
+    result = output.read_text()
+    assert "Team time (America/Toronto): 2026-11-06 11:00" in result
+    assert "Hours remaining: 66.83" in result
+    assert "Deadline status: OPEN" in result
+    section = result.split("## Team and capacity\n", 1)[1].split("\n##", 1)[0]
+    assert "- Team timezone: America/Toronto" in section
+    assert "- Bid effort (hours): 6" in section
+    assert "- Capacity (hours): 12" in section
+    assert "Elapsed hours remaining include nights and are not bid effort or capacity." in section
+    assert "this brief's clock uses" not in result
+    _decision_is_blank(result)
+    assert capsys.readouterr().out.startswith("Brief written:")
+
+
+def test_sample_brief_matches_operations_replay():
+    facts = json.loads((ROOT / "fixtures/operations-rfp.json").read_text())
+    expected = render_brief(facts, "America/Toronto", now="2026-11-03 16:10")
+    checked = (ROOT / "evidence/sample-brief/BRIEF.md").read_text()
+    assert checked == expected
+
+
+def test_omitted_clock_zone_uses_stated_team_tz():
+    facts = json.loads((ROOT / "fixtures/operations-rfp.json").read_text())
+    result = render_brief(facts, now="2026-11-03 16:10")
+    assert "Team time (America/Toronto): 2026-11-06 11:00" in result
+    assert "Team time (Europe/Paris)" not in result
+    assert "Hours remaining: 66.83" in result
+    assert "- Team timezone: America/Toronto" in result
+    _decision_is_blank(result)
+
+
+def test_explicit_clock_zone_still_shows_toronto_facts():
+    facts = json.loads((ROOT / "fixtures/operations-rfp.json").read_text())
+    result = render_brief(facts, "Europe/Paris", now="2026-11-03 22:10")
+    assert "Team time (Europe/Paris): 2026-11-06 17:00" in result
+    assert "Hours remaining: 66.83" in result
+    assert "- Team timezone: America/Toronto" in result
+    assert "- Bid effort (hours): 6" in result
+    assert "- Capacity (hours): 12" in result
+    assert (
+        "Team timezone in the facts is America/Toronto; this brief's clock uses Europe/Paris."
+        in result
+    )
+    _decision_is_blank(result)
+
+
+def test_capacity_facts_absent_omit_the_section(facts):
+    result = render_brief(facts, now="2026-11-04 10:00")
+    assert "## Team and capacity" not in result
+    assert "Bid effort" not in result
+    assert "Capacity (hours)" not in result
+    assert "Hours remaining: 81.48" in result
+    _decision_is_blank(result)
+
+
+def test_fractional_and_zero_hours_are_labelled_facts(facts):
+    facts.update(team_tz="America/Toronto", bid_effort_hours=6.25, capacity_hours=0)
+    assert check_facts(facts) == []
+    result = render_brief(facts, "Europe/Paris", now="2026-11-04 10:00")
+    assert "- Team timezone: America/Toronto" in result
+    assert "- Bid effort (hours): 6.25" in result
+    assert "- Capacity (hours): 0" in result
+    _decision_is_blank(result)
+
+
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("team_tz", "Not/AZone"),
+        ("team_tz", "INCONNU"),
+        ("team_tz", 12),
+        ("bid_effort_hours", -1),
+        ("bid_effort_hours", True),
+        ("bid_effort_hours", "6"),
+        ("bid_effort_hours", float("nan")),
+        ("capacity_hours", float("inf")),
+        ("capacity_hours", "UNKNOWN"),
+    ],
+)
+def test_invalid_capacity_facts_are_reported(facts, field, value):
+    facts[field] = value
+    issues = check_facts(facts)
+    assert any(issue.startswith(f"{field}:") for issue in issues)
+    assert f"{field}: unexpected field" not in issues
+
+
+def test_unknown_capacity_is_labelled_without_a_decision(facts):
+    facts.update(team_tz="INCONNU", bid_effort_hours="UNKNOWN", capacity_hours="INCONNU")
+    result = render_brief(facts, now="2026-11-04 10:00")
+    assert "- Team timezone: INCONNU" in result
+    assert "- Bid effort (hours): INCONNU" in result
+    assert "- Capacity (hours): INCONNU" in result
+    assert "team_tz: missing or INCONNU/UNKNOWN" in result
+    assert "bid_effort_hours: missing or INCONNU/UNKNOWN" in result
+    assert "capacity_hours: missing or INCONNU/UNKNOWN" in result
+    _decision_is_blank(result)
+
+
+def test_effort_above_capacity_is_not_a_verdict():
+    facts = json.loads((ROOT / "fixtures/operations-rfp.json").read_text())
+    facts["bid_effort_hours"] = 20
+    facts["capacity_hours"] = 12
+    result = render_brief(facts, "America/Toronto", now="2026-11-03 16:10")
+    assert "- Bid effort (hours): 20" in result
+    assert "- Capacity (hours): 12" in result
+    assert "KEEP" not in result.split("## Human decision", 1)[0]
+    _decision_is_blank(result)

@@ -16,6 +16,12 @@
 - Hours remaining: 66.83
 - Deadline status: OPEN
 
+## Team and capacity
+- Team timezone: America/Toronto
+- Bid effort (hours): 6
+- Capacity (hours): 12
+- Elapsed hours remaining include nights and are not bid effort or capacity.
+
 ## Required deliverables
 - Two-page proposal: scope, exclusions, acceptance criteria and fixed price
 - Working supplier-intake workflow with a mandatory human approval step
@@ -26,7 +32,7 @@
 - All required facts are present.
 
 ## Notes
-Entirely fictional opportunity, not a real buyer. RUN RFP-DEMO-1103. Source permits AI with human review and forbids customer data in prompts. Team timezone: America/Toronto. Estimated bid effort: 6 hours; available team capacity before deadline: 12 hours. Human must weigh delivery capacity and payment terms; complete facts do not establish profitability or guarantee an award.
+Entirely fictional opportunity, not a real buyer. RUN RFP-DEMO-1103. Source permits AI with human review and forbids customer data in prompts. Human must weigh delivery capacity and payment terms; complete facts do not establish profitability or guarantee an award.
 
 ## Human decision
 Gate: PENDING HUMAN KEEP/KILL
