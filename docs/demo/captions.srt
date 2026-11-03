@@ -1,0 +1,49 @@
+1
+00:00:00,000 --> 00:00:15,000
+01 / The business decision
+Two agents reduce preparation work. The human owns the commitment.
+
+2
+00:00:15,000 --> 00:00:30,000
+02 / Paste once in intake
+Historical RUN 2108: pasted synthetic opportunity, source zone + team zone.
+
+3
+00:00:30,000 --> 00:00:45,000
+03 / Scout validates and writes
+The scout writes facts.json in its own directory before announcing the handoff.
+
+4
+00:00:45,000 --> 00:01:00,000
+04 / Inspect the real facts file
+Historical file capture; the run report also records the scout's write tool result.
+
+5
+00:01:00,000 --> 00:01:15,000
+05 / Address the checker in review
+Checker reads ../ovx-scout/facts.json; it verifies the current run marker and URL.
+
+6
+00:01:15,000 --> 00:01:30,000
+06 / Run keepkill: check, deadline, brief
+RUN 2108: all three commands exit 0. Its historical checker output shows 94.25 hours.
+
+7
+00:01:30,000 --> 00:01:45,000
+07 / New business brief: hours are visible
+Enhanced CLI example at a fixed clock. This output is not from the historical Switch run.
+
+8
+00:01:45,000 --> 00:02:00,000
+08 / A brief is not approval
+Generated gate from the same business brief. No decision has been entered.
+
+9
+00:02:00,000 --> 00:02:15,000
+09 / Stop at the human gate
+Historical brief: Decision stayed blank. Human decision recording is not demonstrated.
+
+10
+00:02:15,000 --> 00:02:30,000
+10 / Reproduce and inspect the evidence
+Track 01 Best Business Workflow | No live screen recording or human voiceover.

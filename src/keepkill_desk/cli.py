@@ -81,9 +81,15 @@ def load_facts(path: str) -> dict:
     return facts
 
 
-def render_brief(facts: dict, target: str = "Europe/Paris") -> str:
+def hours_remaining(at: datetime, now: datetime) -> float:
+    """Measure elapsed UTC hours, including daylight-saving transitions."""
+    return (at.astimezone(timezone.utc) - now.astimezone(timezone.utc)).total_seconds() / 3600
+
+
+def render_brief(facts: dict, target: str = "Europe/Paris", now: str | None = None) -> str:
     issues = check_facts(facts)
     zone = ZoneInfo(target)
+    reference = local_time(now, target) if now is not None else datetime.now(zone)
 
     def display(field: str) -> str:
         value = facts.get(field)
@@ -94,12 +100,14 @@ def render_brief(facts: dict, target: str = "Europe/Paris") -> str:
         return "INCONNU"
 
     converted = "INCONNU"
+    hours = "INCONNU"
+    status = "INCONNU"
     if not any(issue.startswith("deadline_") for issue in issues):
-        converted = (
-            local_time(facts["deadline_local"], facts["deadline_tz"])
-            .astimezone(zone)
-            .strftime("%Y-%m-%d %H:%M")
-        )
+        at = local_time(facts["deadline_local"], facts["deadline_tz"]).astimezone(zone)
+        converted = at.strftime("%Y-%m-%d %H:%M")
+        remaining = hours_remaining(at, reference)
+        hours = f"{remaining:.2f}"
+        status = "EXPIRED" if remaining < 0 else "DUE NOW" if remaining == 0 else "OPEN"
     deliverables = facts.get("deliverables")
     items = ["- INCONNU"]
     if isinstance(deliverables, list) and deliverables:
@@ -118,6 +126,8 @@ def render_brief(facts: dict, target: str = "Europe/Paris") -> str:
         validation.append("- AI tools are forbidden by the supplied facts; human review required.")
     elif ai == "silent":
         validation.append("- Source is silent about AI tools; silence is not permission.")
+    if status == "EXPIRED":
+        validation.append("- Deadline has passed; do not assume an extension.")
     return "\n".join(
         [
             f"# Opportunity brief: {display('name')}",
@@ -134,6 +144,9 @@ def render_brief(facts: dict, target: str = "Europe/Paris") -> str:
             f"- Source local time: {display('deadline_local')}",
             f"- Source timezone: {display('deadline_tz')}",
             f"- Team time ({target}): {converted}",
+            f"- Reference time ({target}): {reference:%Y-%m-%d %H:%M:%S %z}",
+            f"- Hours remaining: {hours}",
+            f"- Deadline status: {status}",
             "",
             "## Required deliverables",
             *items,
@@ -145,9 +158,12 @@ def render_brief(facts: dict, target: str = "Europe/Paris") -> str:
             display("notes"),
             "",
             "## Human decision",
+            "Gate: PENDING HUMAN KEEP/KILL",
             "Decision:",
             "",
             "The human decides KEEP or KILL and records it in the room Decisions.",
+            "Stop here until the human records KEEP or KILL in Decisions.",
+            "Complete facts and an open deadline are not approval. No automatic action follows.",
             "",
         ]
     )
@@ -167,14 +183,16 @@ def main(argv: list[str] | None = None) -> int:
     brief.add_argument("facts")
     brief.add_argument("-o", "--output", required=True)
     brief.add_argument("--to", default="Europe/Paris", help="Team timezone (default Europe/Paris)")
+    brief.add_argument(
+        "--now", help="Reference local time in the --to timezone; default: current time"
+    )
     args = parser.parse_args(argv)
     try:
         if args.command == "deadline":
             target = ZoneInfo(args.to)
             at = local_time(args.at, args.tz).astimezone(target)
             now = local_time(args.now, args.to) if args.now else datetime.now(target)
-            elapsed = at.astimezone(timezone.utc) - now.astimezone(timezone.utc)
-            hours = elapsed.total_seconds() / 3600
+            hours = hours_remaining(at, now)
             print(f"Deadline: {at:%Y-%m-%d %H:%M} ({args.to})")
             print(f"Hours remaining: {hours:.2f}")
             return 0
@@ -183,7 +201,7 @@ def main(argv: list[str] | None = None) -> int:
             issues = check_facts(facts)
             print("\n".join(issues) if issues else "Complete: all required facts are present.")
             return 2 if issues else 0
-        Path(args.output).write_text(render_brief(facts, args.to), encoding="utf-8")
+        Path(args.output).write_text(render_brief(facts, args.to, args.now), encoding="utf-8")
         print(f"Brief written: {args.output}")
         return 0
     except (OSError, ValueError, ZoneInfoNotFoundError) as exc:

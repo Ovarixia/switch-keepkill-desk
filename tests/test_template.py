@@ -109,3 +109,16 @@ def test_checker_reads_scout_file_and_writes_only_brief():
     kickoff = data["rooms"][1]["kickoff"]
     assert "../{team}-scout/facts.json" in kickoff
     assert "human" in kickoff.lower()
+
+
+def test_checker_halts_at_pending_gate_and_brief_carries_hours():
+    data = template()
+    instructions = " ".join(data["agents"][1]["instructions"].split())
+    assert (
+        "BRIEF.md includes hours remaining, reference time and both IANA timezones" in instructions
+    )
+    for agent in data["agents"]:
+        instructions = " ".join(agent["instructions"].split())
+        assert "PENDING HUMAN KEEP/KILL" in instructions
+        assert "Stop here until the human records KEEP or KILL in Decisions" in instructions
+    assert "PENDING HUMAN KEEP/KILL" in data["rooms"][1]["kickoff"]

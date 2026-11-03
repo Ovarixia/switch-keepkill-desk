@@ -1,0 +1,77 @@
+{
+  "source_run": "2026-11-03T2108",
+  "screenshots": [
+    {
+      "source_filename": "03-intake-sent-w1170.png",
+      "source_sha256": "a5b0bfb86a221cf8ffa04657979996abb64ab6baa620a5484dfa804b2812b2d8",
+      "public_filename": "01-intake.png",
+      "public_sha256": "9981511a58412ae1d08f620f519564eeeeac2a9ffb1589e9c345b69c3fb91bc2",
+      "crop_xyxy": [
+        630,
+        440,
+        1440,
+        797
+      ],
+      "redaction_boxes_xyxy_in_source": []
+    },
+    {
+      "source_filename": "04-scout-json-and-path-w1170.png",
+      "source_sha256": "3f0431094ee850f676d7cfbf798b92918967a44954e6676ce649cf663ba7dd48",
+      "public_filename": "02-scout-write.png",
+      "public_sha256": "bc23be2751ab2b8216b9a911944ffc857adf319cc04e442500cb92dcde3d13a8",
+      "crop_xyxy": [
+        630,
+        307,
+        1440,
+        797
+      ],
+      "redaction_boxes_xyxy_in_source": [
+        [
+          705,
+          381,
+          1415,
+          401
+        ]
+      ]
+    },
+    {
+      "source_filename": "08-scout-facts-real-w1359.png",
+      "source_sha256": "f79f8105c9d5f04dbfc011a6589c479593d1d0bb74b86ca3e981c1063189fd1d",
+      "public_filename": "03-facts-file.png",
+      "public_sha256": "a4526fb87737fd29c9c775c835227b370a5297cdcb999e168ec626cae160fded",
+      "crop_xyxy": null,
+      "redaction_boxes_xyxy_in_source": []
+    },
+    {
+      "source_filename": "07-checker-run2108-result-w1170.png",
+      "source_sha256": "2997045d1f4c20d98ad4a2e1a33065f68faf361db9793e8da80bd8b705dd95b7",
+      "public_filename": "04-checker.png",
+      "public_sha256": "968ce02fe0fcb6c19ecc53cca44b925875e8d29226db99c010e3fd8eaf7d7b25",
+      "crop_xyxy": [
+        630,
+        437,
+        1442,
+        796
+      ],
+      "redaction_boxes_xyxy_in_source": [
+        [
+          705,
+          751,
+          1415,
+          773
+        ]
+      ]
+    },
+    {
+      "source_filename": "06-brief-real-readable-w1359.png",
+      "source_sha256": "0c6cac5b1f4c74ae5e7dd85b05e74195845a11cb38a64da4a7d47e50da8cef08",
+      "public_filename": "05-brief-file.png",
+      "public_sha256": "c697f61c6d1afe3883c6fe571243b6ec8d2bf343511cb1195ab097ae15466ad4",
+      "crop_xyxy": null,
+      "redaction_boxes_xyxy_in_source": []
+    }
+  ],
+  "source_report_sha256": "f4408bda634a38d0dc71f1c283ed37c02f216343e350d5813bded2f4e213a643",
+  "public_receipt_sha256": "bffd9e42b6dcfeadf6bfa8ab30d8d41c7b5b85e18c09e96458162a2c40727fe1",
+  "public_report_sha256": "90658fbd4e1aea6fd2033aad9e1ee8aa9dc199eec03bf50d6cb9023232fc8f23"
+}

@@ -1,0 +1,1 @@
+PASS: valid YAML, push/PR main, Python 3.11/3.12, install + ruff + pytest, read-only contents

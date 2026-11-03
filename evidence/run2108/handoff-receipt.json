@@ -1,0 +1,47 @@
+{
+  "description": "Selected historical tool records; paths redacted, runtime IDs omitted",
+  "author": "ovx-scout",
+  "source_sha256": {
+    "scout-write-activity.json": "769f7b52ecd7f85554a563f8ce862ebef6825e52218a7663053050f2a0dca1c0",
+    "checker-command-outputs.json": "5dce03b6ac4208618e4ed4f80a0aa1c87d74a7a6fc71a17716ccfa71149bbbc9"
+  },
+  "scout": [
+    {
+      "timestamp_utc": "2026-11-03T20:13:07.254Z",
+      "tool": "exec",
+      "input": "text(await tools.mcp__switch__post_message({body:\"Processing RUN 2108: validating the supplied facts and writing facts.json before the review hand-off.\"}));\nconst facts = {name:\"Atlas Local Ops Challenge — RUN 2108 (fictional).\",url:\"https://atlas.example.invalid/opportunity-2108\",track:\"Best Business Workflow\",prize:\"USD 2000 (fictional)\",deadline_local:\"2026-11-07 23:59\",deadline_tz:\"Asia/Kolkata\",eligibility:\"Adults based in France; fictional example only.\",deliverables:[\"Repository\",\"demo video\",\"README\"],ai_tools_allowed:\"yes\",notes:\"Synthetic Smoke 2 RUN 2108. No external facts verified. Team timezone confirmed: Europe/Paris.\"};\nconst src = \"Name: Atlas Local Ops Challenge — RUN 2108 (fictional).\\nURL: https://atlas.example.invalid/opportunity-2108\\nTrack: Best Business Workflow\\nPrize: USD 2000 (fictional)\\nDeadline: 2026-11-07 23:59\\nSource timezone: Asia/Kolkata\\nEligibility: Adults based in France; fictional example only.\\nRequired deliverables: Repository; demo video; README.\\nAI tools policy: yes, AI tools are allowed in this fictional challenge.\\nNotes: Synthetic Smoke 2 RUN 2108. No external facts verified. Team timezone confirmed: Europe/Paris.\";\nstore(\"run2108_json\",JSON.stringify(facts,null,2));store(\"run2108_source\",src);\ntext(await tools.exec_command({cmd:\"python3 - <<'PY'\\nimport json\\nfrom pathlib import Path\\nfacts = {\\n    'name': 'Atlas Local Ops Challenge — RUN 2108 (fictional).',\\n    'url': 'https://atlas.example.invalid/opportunity-2108',\\n    'track': 'Best Business Workflow',\\n    'prize': 'USD 2000 (fictional)',\\n    'deadline_local': '2026-11-07 23:59',\\n    'deadline_tz': 'Asia/Kolkata',\\n    'eligibility': 'Adults based in France; fictional example only.',\\n    'deliverables': ['Repository', 'demo video', 'README'],\\n    'ai_tools_allowed': 'yes',\\n    'notes': 'Synthetic Smoke 2 RUN 2108. No external facts verified. Team timezone confirmed: Europe/Paris.'\\n}\\nexpected = {'name','url','track','prize','deadline_local','deadline_tz','eligibility','deliverables','ai_tools_allowed','notes'}\\ndef validate(value):\\n    assert isinstance(value, dict) and set(value) == expected\\n    assert all(isinstance(v, str) for k,v in value.items() if k != 'deliverables')\\n    assert isinstance(value['deliverables'], list) and all(isinstance(v,str) for v in value['deliverables'])\\n    assert value['ai_tools_allowed'] in ('yes','no','silent')\\n    assert 'RUN 2108' in value['name'] and 'RUN 2108' in value['notes']\\n    assert value['url'] == 'https://atlas.example.invalid/opportunity-2108'\\ntext = json.dumps(facts, ensure_ascii=False, indent=2) + '\\\\n'\\nvalidate(json.loads(text))\\npath = Path('facts.json')\\npath.write_text(text, encoding='utf-8')\\nwritten = json.loads(path.read_text(encoding='utf-8'))\\nvalidate(written)\\nassert written == facts\\nprint('Validated JSON syntax and field types; wrote and verified ' + str(path.resolve()))\\nPY\",\"workdir\":\"<HOME>/.switch/agents/<server-id>/ovx-scout\",\"max_output_tokens\":1000}));\n"
+    },
+    {
+      "timestamp_utc": "2026-11-03T20:13:07.446Z",
+      "exit_code": 0,
+      "output": "Validated JSON syntax and field types; wrote and verified <HOME>/.switch/agents/<server-id>/ovx-scout/facts.json\n"
+    }
+  ],
+  "checker": [
+    {
+      "timestamp_utc": "2026-11-03T20:13:27.868Z",
+      "exit_code": 0,
+      "output": "{\n  \"name\": \"Atlas Local Ops Challenge — RUN 2108 (fictional).\",\n  \"url\": \"https://atlas.example.invalid/opportunity-2108\",\n  \"track\": \"Best Business Workflow\",\n  \"prize\": \"USD 2000 (fictional)\",\n  \"deadline_local\": \"2026-11-07 23:59\",\n  \"deadline_tz\": \"Asia/Kolkata\",\n  \"eligibility\": \"Adults based in France; fictional example only.\",\n  \"deliverables\": [\n    \"Repository\",\n    \"demo video\",\n    \"README\"\n  ],\n  \"ai_tools_allowed\": \"yes\",\n  \"notes\": \"Synthetic Smoke 2 RUN 2108. No external facts verified. Team timezone confirmed: Europe/Paris.\"\n}\n"
+    },
+    {
+      "timestamp_utc": "2026-11-03T20:13:38.325Z",
+      "exit_code": 0,
+      "output": "Complete: all required facts are present.\n"
+    },
+    {
+      "timestamp_utc": "2026-11-03T20:13:44.431Z",
+      "exit_code": 0,
+      "output": "Deadline: 2026-11-07 19:29 (Europe/Paris)\nHours remaining: 94.25\n"
+    },
+    {
+      "timestamp_utc": "2026-11-03T20:13:44.431Z",
+      "exit_code": 0,
+      "output": "Brief written: BRIEF.md\n"
+    },
+    {
+      "timestamp_utc": "2026-11-03T20:13:44.431Z",
+      "exit_code": 0,
+      "output": "# Opportunity brief: Atlas Local Ops Challenge — RUN 2108 (fictional).\n\n## Facts\n- Name: Atlas Local Ops Challenge — RUN 2108 (fictional).\n- URL: https://atlas.example.invalid/opportunity-2108\n- Track: Best Business Workflow\n- Prize: USD 2000 (fictional)\n- Eligibility: Adults based in France; fictional example only.\n- AI tools allowed: yes\n\n## Deadline\n- Source local time: 2026-11-07 23:59\n- Source timezone: Asia/Kolkata\n- Team time (Europe/Paris): 2026-11-07 19:29\n\n## Required deliverables\n- Repository\n- demo video\n- README\n\n## Missing facts and cautions\n- All required facts are present.\n\n## Notes\nSynthetic Smoke 2 RUN 2108. No external facts verified. Team timezone confirmed: Europe/Paris.\n\n## Human decision\nDecision:\n\nThe human decides KEEP or KILL and records it in the room Decisions.\n"
+    }
+  ]
+}

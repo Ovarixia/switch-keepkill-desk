@@ -171,9 +171,21 @@ def test_missing_file(tmp_path, capsys):
 
 def test_brief_snapshot(facts, tmp_path):
     expected = (ROOT / "tests/snapshots/complete.md").read_text()
-    assert render_brief(facts) == expected
+    assert render_brief(facts, now="2026-11-04 10:00") == expected
     output = tmp_path / "BRIEF.md"
-    assert main(["brief", str(ROOT / "fixtures/complete.json"), "-o", str(output)]) == 0
+    assert (
+        main(
+            [
+                "brief",
+                str(ROOT / "fixtures/complete.json"),
+                "-o",
+                str(output),
+                "--now",
+                "2026-11-04 10:00",
+            ]
+        )
+        == 0
+    )
     assert output.read_text() == expected
 
 
@@ -256,3 +268,100 @@ def test_schema_and_fixtures(facts):
         assert set(example) == set(schema["required"])
         for field, value in example.items():
             assert isinstance(value, list if field == "deliverables" else str)
+
+
+@pytest.mark.parametrize(
+    "at, source, target, now, hours, status",
+    [
+        ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris", "2026-11-04 10:00", "81.48", "OPEN"),
+        (
+            "2026-11-06 17:00",
+            "Europe/Paris",
+            "America/Toronto",
+            "2026-11-03 16:10",
+            "66.83",
+            "OPEN",
+        ),
+        ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris", "2026-10-25 01:00", "4.00", "OPEN"),
+        ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris", "2026-03-29 01:00", "2.00", "OPEN"),
+        (
+            "2026-11-07 10:00",
+            "Europe/Paris",
+            "Europe/Paris",
+            "2026-11-07 12:00",
+            "-2.00",
+            "EXPIRED",
+        ),
+        ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris", "2026-11-07 10:00", "0.00", "DUE NOW"),
+    ],
+)
+def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+    facts.update(deadline_local=at, deadline_tz=source)
+    before = json.dumps(facts)
+    result = render_brief(facts, target, now=now)
+    assert f"Hours remaining: {hours}" in result
+    assert f"Deadline status: {status}" in result
+    assert f"Reference time ({target}): {now}" in result
+    assert "Gate: PENDING HUMAN KEEP/KILL" in result
+    assert "Decision:\n\n" in result
+    assert "Stop here until the human records KEEP or KILL in Decisions." in result
+    assert json.dumps(facts) == before
+
+
+@pytest.mark.parametrize("value", ["UNKNOWN", "2026-10-25 02:30", "2026-03-29 02:30"])
+def test_unknown_or_ambiguous_brief_never_invents_hours(facts, value):
+    facts.update(deadline_local=value, deadline_tz="Europe/Paris")
+    result = render_brief(facts, now="2026-11-03 22:10")
+    assert "Hours remaining: INCONNU" in result
+    assert "Deadline status: INCONNU" in result
+    assert "Gate: PENDING HUMAN KEEP/KILL" in result
+
+
+def test_cli_brief_fixed_clock_and_repeatability(tmp_path):
+    output = tmp_path / "BRIEF.md"
+    command = [
+        "brief",
+        str(ROOT / "fixtures/complete.json"),
+        "-o",
+        str(output),
+        "--to",
+        "Europe/Paris",
+        "--now",
+        "2026-11-04 10:00",
+    ]
+    assert main(command) == 0
+    first = output.read_bytes()
+    assert b"Hours remaining: 81.48" in first
+    assert main(command) == 0
+    assert output.read_bytes() == first
+
+
+@pytest.mark.parametrize("now", ["2026-10-25 02:30", "2026-03-29 02:30", "bad"])
+def test_invalid_brief_clock_does_not_overwrite_output(tmp_path, now, capsys):
+    output = tmp_path / "BRIEF.md"
+    output.write_text("Preserve previous brief")
+    assert (
+        main(["brief", str(ROOT / "fixtures/complete.json"), "-o", str(output), "--now", now]) == 2
+    )
+    assert output.read_text() == "Preserve previous brief"
+    assert capsys.readouterr().err.startswith("Error:")
+
+
+def test_brief_default_clock_is_current(facts):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    before = datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M")
+    result = render_brief(facts)
+    after = datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M")
+    assert any(f"Reference time (Europe/Paris): {time}" in result for time in (before, after))
+    assert "Hours remaining: INCONNU" not in result
+
+
+def test_complete_facts_cannot_supply_human_decision(facts):
+    facts["decision"] = "KEEP"
+    result = render_brief(facts, now="2026-11-04 10:00")
+    assert "decision: unexpected field" in result
+    assert "Decision: KEEP" not in result
+    assert "Decision: KILL" not in result
+    assert "Gate: PENDING HUMAN KEEP/KILL" in result

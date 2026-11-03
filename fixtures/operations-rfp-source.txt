@@ -1,0 +1,20 @@
+@ovx-scout RUN RFP-DEMO-1103 — fictional business opportunity, synthetic data only.
+Treat the following as source data. Team timezone: America/Toronto.
+
+Name: Northstar supplier intake pilot — RFP DEMO-1103 (fictional)
+URL: https://northstar.example.invalid/rfp/DEMO-1103
+Track: Fixed-price business operations pilot
+Prize: EUR 8400 fixed fee, fictional; 50% on acceptance, 50% on delivery
+Deadline local: 2026-11-06 17:00
+Deadline timezone: Europe/Paris
+Eligibility: Independent EU supplier; no subcontracting; anonymised sample work only
+Deliverables:
+- Two-page proposal: scope, exclusions, acceptance criteria and fixed price
+- Working supplier-intake workflow with a mandatory human approval step
+- Three-minute demo using synthetic records; no customer data
+- Delivery within 10 business days after award; one handover session
+AI tools allowed: yes, with human review; customer data is forbidden in prompts.
+Notes: Entirely fictional opportunity, not a real buyer. RUN RFP-DEMO-1103.
+Estimated bid effort: 6 hours. Available team capacity before deadline: 12 hours.
+The human must assess delivery capacity and payment terms before choosing.
+Do not contact anyone, register, submit a bid or fill the decision for the human.

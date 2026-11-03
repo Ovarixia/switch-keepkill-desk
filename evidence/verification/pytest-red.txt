@@ -1,0 +1,429 @@
+...................................FFFFFFFFFFFFFFF......F                [100%]
+=================================== FAILURES ===================================
+_ test_brief_elapsed_hours_and_pending_gate[2026-11-07 23:59-Asia/Kolkata-Europe/Paris-2026-11-04 10:00-81.48-OPEN] _
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+at = '2026-11-07 23:59', source = 'Asia/Kolkata', target = 'Europe/Paris'
+now = '2026-11-04 10:00', hours = '81.48', status = 'OPEN'
+
+    @pytest.mark.parametrize(
+        "at, source, target, now, hours, status",
+        [
+            ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris",
+             "2026-11-04 10:00", "81.48", "OPEN"),
+            ("2026-11-06 17:00", "Europe/Paris", "America/Toronto",
+             "2026-11-03 16:10", "66.83", "OPEN"),
+            ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-10-25 01:00", "4.00", "OPEN"),
+            ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-03-29 01:00", "2.00", "OPEN"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 12:00", "-2.00", "EXPIRED"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 10:00", "0.00", "DUE NOW"),
+        ],
+    )
+    def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+        facts.update(deadline_local=at, deadline_tz=source)
+        before = json.dumps(facts)
+>       result = render_brief(facts, target, now=now)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:281: TypeError
+_ test_brief_elapsed_hours_and_pending_gate[2026-11-06 17:00-Europe/Paris-America/Toronto-2026-11-03 16:10-66.83-OPEN] _
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+at = '2026-11-06 17:00', source = 'Europe/Paris', target = 'America/Toronto'
+now = '2026-11-03 16:10', hours = '66.83', status = 'OPEN'
+
+    @pytest.mark.parametrize(
+        "at, source, target, now, hours, status",
+        [
+            ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris",
+             "2026-11-04 10:00", "81.48", "OPEN"),
+            ("2026-11-06 17:00", "Europe/Paris", "America/Toronto",
+             "2026-11-03 16:10", "66.83", "OPEN"),
+            ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-10-25 01:00", "4.00", "OPEN"),
+            ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-03-29 01:00", "2.00", "OPEN"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 12:00", "-2.00", "EXPIRED"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 10:00", "0.00", "DUE NOW"),
+        ],
+    )
+    def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+        facts.update(deadline_local=at, deadline_tz=source)
+        before = json.dumps(facts)
+>       result = render_brief(facts, target, now=now)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:281: TypeError
+_ test_brief_elapsed_hours_and_pending_gate[2026-10-25 04:00-Europe/Paris-Europe/Paris-2026-10-25 01:00-4.00-OPEN] _
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+at = '2026-10-25 04:00', source = 'Europe/Paris', target = 'Europe/Paris'
+now = '2026-10-25 01:00', hours = '4.00', status = 'OPEN'
+
+    @pytest.mark.parametrize(
+        "at, source, target, now, hours, status",
+        [
+            ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris",
+             "2026-11-04 10:00", "81.48", "OPEN"),
+            ("2026-11-06 17:00", "Europe/Paris", "America/Toronto",
+             "2026-11-03 16:10", "66.83", "OPEN"),
+            ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-10-25 01:00", "4.00", "OPEN"),
+            ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-03-29 01:00", "2.00", "OPEN"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 12:00", "-2.00", "EXPIRED"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 10:00", "0.00", "DUE NOW"),
+        ],
+    )
+    def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+        facts.update(deadline_local=at, deadline_tz=source)
+        before = json.dumps(facts)
+>       result = render_brief(facts, target, now=now)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:281: TypeError
+_ test_brief_elapsed_hours_and_pending_gate[2026-03-29 04:00-Europe/Paris-Europe/Paris-2026-03-29 01:00-2.00-OPEN] _
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+at = '2026-03-29 04:00', source = 'Europe/Paris', target = 'Europe/Paris'
+now = '2026-03-29 01:00', hours = '2.00', status = 'OPEN'
+
+    @pytest.mark.parametrize(
+        "at, source, target, now, hours, status",
+        [
+            ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris",
+             "2026-11-04 10:00", "81.48", "OPEN"),
+            ("2026-11-06 17:00", "Europe/Paris", "America/Toronto",
+             "2026-11-03 16:10", "66.83", "OPEN"),
+            ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-10-25 01:00", "4.00", "OPEN"),
+            ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-03-29 01:00", "2.00", "OPEN"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 12:00", "-2.00", "EXPIRED"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 10:00", "0.00", "DUE NOW"),
+        ],
+    )
+    def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+        facts.update(deadline_local=at, deadline_tz=source)
+        before = json.dumps(facts)
+>       result = render_brief(facts, target, now=now)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:281: TypeError
+_ test_brief_elapsed_hours_and_pending_gate[2026-11-07 10:00-Europe/Paris-Europe/Paris-2026-11-07 12:00--2.00-EXPIRED] _
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+at = '2026-11-07 10:00', source = 'Europe/Paris', target = 'Europe/Paris'
+now = '2026-11-07 12:00', hours = '-2.00', status = 'EXPIRED'
+
+    @pytest.mark.parametrize(
+        "at, source, target, now, hours, status",
+        [
+            ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris",
+             "2026-11-04 10:00", "81.48", "OPEN"),
+            ("2026-11-06 17:00", "Europe/Paris", "America/Toronto",
+             "2026-11-03 16:10", "66.83", "OPEN"),
+            ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-10-25 01:00", "4.00", "OPEN"),
+            ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-03-29 01:00", "2.00", "OPEN"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 12:00", "-2.00", "EXPIRED"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 10:00", "0.00", "DUE NOW"),
+        ],
+    )
+    def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+        facts.update(deadline_local=at, deadline_tz=source)
+        before = json.dumps(facts)
+>       result = render_brief(facts, target, now=now)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:281: TypeError
+_ test_brief_elapsed_hours_and_pending_gate[2026-11-07 10:00-Europe/Paris-Europe/Paris-2026-11-07 10:00-0.00-DUE NOW] _
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+at = '2026-11-07 10:00', source = 'Europe/Paris', target = 'Europe/Paris'
+now = '2026-11-07 10:00', hours = '0.00', status = 'DUE NOW'
+
+    @pytest.mark.parametrize(
+        "at, source, target, now, hours, status",
+        [
+            ("2026-11-07 23:59", "Asia/Kolkata", "Europe/Paris",
+             "2026-11-04 10:00", "81.48", "OPEN"),
+            ("2026-11-06 17:00", "Europe/Paris", "America/Toronto",
+             "2026-11-03 16:10", "66.83", "OPEN"),
+            ("2026-10-25 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-10-25 01:00", "4.00", "OPEN"),
+            ("2026-03-29 04:00", "Europe/Paris", "Europe/Paris",
+             "2026-03-29 01:00", "2.00", "OPEN"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 12:00", "-2.00", "EXPIRED"),
+            ("2026-11-07 10:00", "Europe/Paris", "Europe/Paris",
+             "2026-11-07 10:00", "0.00", "DUE NOW"),
+        ],
+    )
+    def test_brief_elapsed_hours_and_pending_gate(facts, at, source, target, now, hours, status):
+        facts.update(deadline_local=at, deadline_tz=source)
+        before = json.dumps(facts)
+>       result = render_brief(facts, target, now=now)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:281: TypeError
+_________ test_unknown_or_ambiguous_brief_never_invents_hours[UNKNOWN] _________
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+value = 'UNKNOWN'
+
+    @pytest.mark.parametrize("value", ["UNKNOWN", "2026-10-25 02:30", "2026-03-29 02:30"])
+    def test_unknown_or_ambiguous_brief_never_invents_hours(facts, value):
+        facts.update(deadline_local=value, deadline_tz="Europe/Paris")
+>       result = render_brief(facts, now="2026-11-03 22:10")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:294: TypeError
+____ test_unknown_or_ambiguous_brief_never_invents_hours[2026-10-25 02:30] _____
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+value = '2026-10-25 02:30'
+
+    @pytest.mark.parametrize("value", ["UNKNOWN", "2026-10-25 02:30", "2026-03-29 02:30"])
+    def test_unknown_or_ambiguous_brief_never_invents_hours(facts, value):
+        facts.update(deadline_local=value, deadline_tz="Europe/Paris")
+>       result = render_brief(facts, now="2026-11-03 22:10")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:294: TypeError
+____ test_unknown_or_ambiguous_brief_never_invents_hours[2026-03-29 02:30] _____
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+value = '2026-03-29 02:30'
+
+    @pytest.mark.parametrize("value", ["UNKNOWN", "2026-10-25 02:30", "2026-03-29 02:30"])
+    def test_unknown_or_ambiguous_brief_never_invents_hours(facts, value):
+        facts.update(deadline_local=value, deadline_tz="Europe/Paris")
+>       result = render_brief(facts, now="2026-11-03 22:10")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:294: TypeError
+_________________ test_cli_brief_fixed_clock_and_repeatability _________________
+
+tmp_path = PosixPath('/private/var/folders/yd/m_5q0nkj4gn179mcnbw01k9r0000gn/T/pytest-of-ovarixia/pytest-12/test_cli_brief_fixed_clock_and0')
+
+    def test_cli_brief_fixed_clock_and_repeatability(tmp_path):
+        output = tmp_path / "BRIEF.md"
+        command = ["brief", str(ROOT / "fixtures/complete.json"), "-o", str(output),
+                   "--to", "Europe/Paris", "--now", "2026-11-04 10:00"]
+>       assert main(command) == 0
+               ^^^^^^^^^^^^^
+
+tests/test_cli.py:304:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/keepkill_desk/cli.py:170: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2153: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2958: in error
+    self.exit(2, fmt % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ArgumentParser(prog='keepkill', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'keepkill: error: unrecognized arguments: --now 2026-11-04 10:00\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2940: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: keepkill [-h] {deadline,check,brief} ...
+keepkill: error: unrecognized arguments: --now 2026-11-04 10:00
+_____ test_invalid_brief_clock_does_not_overwrite_output[2026-10-25 02:30] _____
+
+tmp_path = PosixPath('/private/var/folders/yd/m_5q0nkj4gn179mcnbw01k9r0000gn/T/pytest-of-ovarixia/pytest-12/test_invalid_brief_clock_does_0')
+now = '2026-10-25 02:30'
+capsys = <_pytest.capture.CaptureFixture object at 0x108c1bc50>
+
+    @pytest.mark.parametrize("now", ["2026-10-25 02:30", "2026-03-29 02:30", "bad"])
+    def test_invalid_brief_clock_does_not_overwrite_output(tmp_path, now, capsys):
+        output = tmp_path / "BRIEF.md"
+        output.write_text("Preserve previous brief")
+>       assert main(["brief", str(ROOT / "fixtures/complete.json"), "-o", str(output),
+                     "--now", now]) == 2
+
+tests/test_cli.py:315:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/keepkill_desk/cli.py:170: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2153: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2958: in error
+    self.exit(2, fmt % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ArgumentParser(prog='keepkill', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'keepkill: error: unrecognized arguments: --now 2026-10-25 02:30\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2940: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: keepkill [-h] {deadline,check,brief} ...
+keepkill: error: unrecognized arguments: --now 2026-10-25 02:30
+_____ test_invalid_brief_clock_does_not_overwrite_output[2026-03-29 02:30] _____
+
+tmp_path = PosixPath('/private/var/folders/yd/m_5q0nkj4gn179mcnbw01k9r0000gn/T/pytest-of-ovarixia/pytest-12/test_invalid_brief_clock_does_1')
+now = '2026-03-29 02:30'
+capsys = <_pytest.capture.CaptureFixture object at 0x108bf4c90>
+
+    @pytest.mark.parametrize("now", ["2026-10-25 02:30", "2026-03-29 02:30", "bad"])
+    def test_invalid_brief_clock_does_not_overwrite_output(tmp_path, now, capsys):
+        output = tmp_path / "BRIEF.md"
+        output.write_text("Preserve previous brief")
+>       assert main(["brief", str(ROOT / "fixtures/complete.json"), "-o", str(output),
+                     "--now", now]) == 2
+
+tests/test_cli.py:315:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/keepkill_desk/cli.py:170: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2153: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2958: in error
+    self.exit(2, fmt % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ArgumentParser(prog='keepkill', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2
+message = 'keepkill: error: unrecognized arguments: --now 2026-03-29 02:30\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2940: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: keepkill [-h] {deadline,check,brief} ...
+keepkill: error: unrecognized arguments: --now 2026-03-29 02:30
+___________ test_invalid_brief_clock_does_not_overwrite_output[bad] ____________
+
+tmp_path = PosixPath('/private/var/folders/yd/m_5q0nkj4gn179mcnbw01k9r0000gn/T/pytest-of-ovarixia/pytest-12/test_invalid_brief_clock_does_2')
+now = 'bad', capsys = <_pytest.capture.CaptureFixture object at 0x108c159b0>
+
+    @pytest.mark.parametrize("now", ["2026-10-25 02:30", "2026-03-29 02:30", "bad"])
+    def test_invalid_brief_clock_does_not_overwrite_output(tmp_path, now, capsys):
+        output = tmp_path / "BRIEF.md"
+        output.write_text("Preserve previous brief")
+>       assert main(["brief", str(ROOT / "fixtures/complete.json"), "-o", str(output),
+                     "--now", now]) == 2
+
+tests/test_cli.py:315:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/keepkill_desk/cli.py:170: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2153: in parse_args
+    self.error(msg)
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2958: in error
+    self.exit(2, fmt % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ArgumentParser(prog='keepkill', usage=None, description=None, formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+status = 2, message = 'keepkill: error: unrecognized arguments: --now bad\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+>       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/argparse.py:2940: SystemExit
+----------------------------- Captured stderr call -----------------------------
+usage: keepkill [-h] {deadline,check,brief} ...
+keepkill: error: unrecognized arguments: --now bad
+_____________________ test_brief_default_clock_is_current ______________________
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+
+    def test_brief_default_clock_is_current(facts):
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+
+        before = datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M")
+        result = render_brief(facts)
+        after = datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M")
+>       assert any(f"Reference time (Europe/Paris): {time}" in result for time in (before, after))
+E       assert False
+E        +  where False = any(<generator object test_brief_default_clock_is_current.<locals>.<genexpr> at 0x108c16f80>)
+
+tests/test_cli.py:328: AssertionError
+_______________ test_complete_facts_cannot_supply_human_decision _______________
+
+facts = {'name': 'Example local workflow challenge', 'url': 'https://example.invalid/challenge', 'track': 'Business Workflow', 'prize': 'USD 2000 (fictional example)', ...}
+
+    def test_complete_facts_cannot_supply_human_decision(facts):
+        facts["decision"] = "KEEP"
+>       result = render_brief(facts, now="2026-11-04 10:00")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: render_brief() got an unexpected keyword argument 'now'
+
+tests/test_cli.py:334: TypeError
+__________ test_checker_halts_at_pending_gate_and_brief_carries_hours __________
+
+    def test_checker_halts_at_pending_gate_and_brief_carries_hours():
+        data = template()
+        instructions = " ".join(data["agents"][1]["instructions"].split())
+>       assert "BRIEF.md includes hours remaining, reference time and both IANA timezones" in instructions
+E       assert 'BRIEF.md includes hours remaining, reference time and both IANA timezones' in "1. Work only in {team}-review on the scout's supplied facts. Read-only by default. For missing facts write INCONNU/UN...blank. No browsing, accounts, external messages, registrations or submissions. Request other permissions in this room."
+
+tests/test_template.py:117: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_cli.py::test_brief_elapsed_hours_and_pending_gate[2026-11-07 23:59-Asia/Kolkata-Europe/Paris-2026-11-04 10:00-81.48-OPEN]
+FAILED tests/test_cli.py::test_brief_elapsed_hours_and_pending_gate[2026-11-06 17:00-Europe/Paris-America/Toronto-2026-11-03 16:10-66.83-OPEN]
+FAILED tests/test_cli.py::test_brief_elapsed_hours_and_pending_gate[2026-10-25 04:00-Europe/Paris-Europe/Paris-2026-10-25 01:00-4.00-OPEN]
+FAILED tests/test_cli.py::test_brief_elapsed_hours_and_pending_gate[2026-03-29 04:00-Europe/Paris-Europe/Paris-2026-03-29 01:00-2.00-OPEN]
+FAILED tests/test_cli.py::test_brief_elapsed_hours_and_pending_gate[2026-11-07 10:00-Europe/Paris-Europe/Paris-2026-11-07 12:00--2.00-EXPIRED]
+FAILED tests/test_cli.py::test_brief_elapsed_hours_and_pending_gate[2026-11-07 10:00-Europe/Paris-Europe/Paris-2026-11-07 10:00-0.00-DUE NOW]
+FAILED tests/test_cli.py::test_unknown_or_ambiguous_brief_never_invents_hours[UNKNOWN]
+FAILED tests/test_cli.py::test_unknown_or_ambiguous_brief_never_invents_hours[2026-10-25 02:30]
+FAILED tests/test_cli.py::test_unknown_or_ambiguous_brief_never_invents_hours[2026-03-29 02:30]
+FAILED tests/test_cli.py::test_cli_brief_fixed_clock_and_repeatability - Syst...
+FAILED tests/test_cli.py::test_invalid_brief_clock_does_not_overwrite_output[2026-10-25 02:30]
+FAILED tests/test_cli.py::test_invalid_brief_clock_does_not_overwrite_output[2026-03-29 02:30]
+FAILED tests/test_cli.py::test_invalid_brief_clock_does_not_overwrite_output[bad]
+FAILED tests/test_cli.py::test_brief_default_clock_is_current - assert False
+FAILED tests/test_cli.py::test_complete_facts_cannot_supply_human_decision - ...
+FAILED tests/test_template.py::test_checker_halts_at_pending_gate_and_brief_carries_hours
+16 failed, 41 passed in 0.18s
