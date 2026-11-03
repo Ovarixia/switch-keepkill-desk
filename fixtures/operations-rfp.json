@@ -5,6 +5,9 @@
   "prize": "EUR 8400 fixed fee, fictional; 50% on acceptance, 50% on delivery",
   "deadline_local": "2026-11-06 17:00",
   "deadline_tz": "Europe/Paris",
+  "team_tz": "America/Toronto",
+  "bid_effort_hours": 6,
+  "capacity_hours": 12,
   "eligibility": "Independent EU supplier; no subcontracting; anonymised sample work only",
   "deliverables": [
     "Two-page proposal: scope, exclusions, acceptance criteria and fixed price",
@@ -13,5 +16,5 @@
     "Delivery within 10 business days after award; one handover session"
   ],
   "ai_tools_allowed": "yes",
-  "notes": "Entirely fictional opportunity, not a real buyer. RUN RFP-DEMO-1103. Source permits AI with human review and forbids customer data in prompts. Team timezone: America/Toronto. Estimated bid effort: 6 hours; available team capacity before deadline: 12 hours. Human must weigh delivery capacity and payment terms; complete facts do not establish profitability or guarantee an award."
+  "notes": "Entirely fictional opportunity, not a real buyer. RUN RFP-DEMO-1103. Source permits AI with human review and forbids customer data in prompts. Human must weigh delivery capacity and payment terms; complete facts do not establish profitability or guarantee an award."
 }

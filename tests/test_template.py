@@ -111,6 +111,27 @@ def test_checker_reads_scout_file_and_writes_only_brief():
     assert "human" in kickoff.lower()
 
 
+def test_template_extracts_capacity_without_forcing_paris_on_toronto():
+    text = TEMPLATE_PATH.read_text()
+    data = template()
+    scout = " ".join(data["agents"][0]["instructions"].split())
+    checker = " ".join(data["agents"][1]["instructions"].split())
+    kickoff = " ".join(data["rooms"][1]["kickoff"].split())
+    assert "(demo: Europe/Paris)" not in text
+    for instructions in (scout, checker, kickoff):
+        assert "team_tz" in instructions
+        assert "bid_effort_hours" in instructions
+        assert "capacity_hours" in instructions
+        assert "America/Toronto" in instructions
+    assert "INCONNU/UNKNOWN, never guess" in scout
+    assert "Omit team_tz, bid_effort_hours and capacity_hours" in scout
+    assert "Pass team_tz, bid_effort_hours and capacity_hours through" in checker
+    assert '--to "<team_tz>"' in checker
+    assert "Do not replace a stated team zone with Europe/Paris" in checker
+    assert "Do not force Europe/Paris" in kickoff
+    assert "labelled team timezone, bid effort hours and capacity hours" in checker
+
+
 def test_checker_halts_at_pending_gate_and_brief_carries_hours():
     data = template()
     instructions = " ".join(data["agents"][1]["instructions"].split())

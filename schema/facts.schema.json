@@ -10,7 +10,22 @@
     "track": {"type": "string", "minLength": 1},
     "prize": {"type": "string", "minLength": 1},
     "deadline_local": {"type": "string", "minLength": 1, "description": "YYYY-MM-DD HH:MM, or INCONNU when missing"},
-    "deadline_tz": {"type": "string", "minLength": 1, "description": "IANA timezone, or INCONNU when missing"},
+    "deadline_tz": {"type": "string", "minLength": 1, "description": "IANA timezone of the source deadline, or INCONNU when missing"},
+    "team_tz": {
+      "type": "string",
+      "minLength": 1,
+      "description": "IANA timezone of the team doing the work, when the source states it. Distinct from deadline_tz. Omit the key when unstated."
+    },
+    "bid_effort_hours": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Stated hours to prepare the bid. Not elapsed time until the deadline. Omit the key when unstated."
+    },
+    "capacity_hours": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Stated team hours available before the deadline. Not elapsed wall-clock hours. Omit the key when unstated."
+    },
     "eligibility": {"type": "string", "minLength": 1},
     "deliverables": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
     "ai_tools_allowed": {"type": "string", "enum": ["yes", "no", "silent"]},

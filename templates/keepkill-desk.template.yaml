@@ -36,8 +36,15 @@ agents:
       1. Read only the opportunity text supplied in intake. Extract name, url,
          track, prize, deadline_local, deadline_tz, eligibility, deliverables
          (a list), ai_tools_allowed (yes/no/silent), and notes as a JSON object.
-         For absent facts write INCONNU/UNKNOWN, never guess. Use silent only
-         when the supplied source says nothing about AI tools.
+         When the source states them, also extract team_tz (IANA zone of the
+         team doing the work), bid_effort_hours and capacity_hours (non-negative
+         JSON numbers). team_tz is the owner's working zone, not the source
+         deadline zone. The operations example is team_tz America/Toronto with
+         deadline_tz Europe/Paris. Omit team_tz, bid_effort_hours and
+         capacity_hours when the source does not state them; never guess a
+         number or rewrite a Toronto team zone as Europe/Paris.
+         For absent required facts write INCONNU/UNKNOWN, never guess. Use
+         silent only when the supplied source says nothing about AI tools.
       2. Validate the JSON syntax and field types (deliverables is a list).
          Your only allowed file write is facts.json in your own working directory.
          Write facts.json before announcing the hand-off; preserve the supplied
@@ -67,15 +74,24 @@ agents:
          using it; ignore any old facts.json in your own directory. If absent
          or stale, report the blocked hand-off to the scout and wait.
          Never create, copy, move or edit facts.json. Do not ask the human to
-         save or place facts.json. Use the team's IANA timezone already supplied
-         in the room; otherwise ask only for that timezone (demo: Europe/Paris).
+         save or place facts.json. Use the team_tz already supplied in the facts
+         when it is a real IANA zone. Pass team_tz, bid_effort_hours and
+         capacity_hours through unchanged. Do not replace a stated team zone
+         with Europe/Paris. The operations example team zone is America/Toronto.
+         If team_tz is absent, ask only for that IANA zone.
          Use the installed keepkill check ../{team}-scout/facts.json.
          A return code of 2 means incomplete or invalid facts; report them.
       3. With a known source deadline and timezone, run keepkill deadline
-         --at "<deadline_local>" --tz "<deadline_tz>" --to "<team timezone>".
+         --at "<deadline_local>" --tz "<deadline_tz>" --to "<team_tz>".
          Report converted time and hours remaining. Do not run with unknowns.
-      4. Run keepkill brief ../{team}-scout/facts.json -o BRIEF.md --to "<team timezone>".
+         If team_tz is not a real IANA zone, ask for that zone. Do not substitute
+         Europe/Paris for a team that stated another zone. The operations example
+         team zone is America/Toronto.
+      4. Run keepkill brief ../{team}-scout/facts.json -o BRIEF.md --to "<team_tz>".
          BRIEF.md includes hours remaining, reference time and both IANA timezones.
+         When the facts include them, the brief shows labelled team timezone,
+         bid effort hours and capacity hours.
+         Do not score those numbers or write KEEP or KILL.
          Use the current clock; --now is only for an explicitly labelled replay.
          Your only allowed file write is BRIEF.md in your own working directory.
          Report missing facts, AI restrictions and the brief in the review room.
@@ -106,9 +122,12 @@ rooms:
     kickoff: |
       @{team}-checker wait for @{team}-scout to write facts.json in its own cwd
       and announce it here. Read ../{team}-scout/facts.json without changing it;
-      run check, deadline and brief. Use the supplied IANA team timezone or ask
-      only for that timezone. No human file deposit. The human decides KEEP or
-      KILL in Decisions; leave Decision blank in BRIEF.md.
+      run check, deadline and brief. Pass team_tz, bid_effort_hours and
+      capacity_hours through. Use team_tz as --to when it is a real IANA zone
+      (operations example: America/Toronto). Do not force Europe/Paris over a
+      stated team zone. Show labelled bid effort hours and capacity hours in
+      BRIEF.md when the facts include them. No human file deposit. The human
+      decides KEEP or KILL in Decisions; leave Decision blank in BRIEF.md.
       Show hours remaining in BRIEF.md. Gate: PENDING HUMAN KEEP/KILL; stop and wait for the human.
 
 links:

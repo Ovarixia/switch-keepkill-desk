@@ -9,9 +9,11 @@ An EU supplier is deciding whether to spend six hours bidding for a fictional
 EUR 8400 pilot, with twelve available team hours before the deadline. The source
 closes at **17:00 Europe/Paris**; the bid owner works in **America/Toronto**, where
 it is **11:00**. At the fixed replay time 3 November 2026, 16:10 Toronto (22:10
-Paris), **66.83 elapsed hours** remain. Capacity is a separate source fact, not
-66.83 working hours. Delivery in ten business days, scope and payment terms
-still require human judgement; the tool does not estimate margin or recommend KEEP.
+Paris), **66.83 elapsed hours** remain. The brief labels team timezone
+`America/Toronto`, bid effort `6` hours and capacity `12` hours under
+**Team and capacity**. Capacity is a separate source fact, not 66.83 working
+hours. Delivery in ten business days, scope and payment terms still require
+human judgement; the tool does not estimate margin or recommend KEEP.
 
 From the clone root after installation:
 

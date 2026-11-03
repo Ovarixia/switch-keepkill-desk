@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,7 +20,10 @@ FIELDS = (
     "ai_tools_allowed",
     "notes",
 )
+OPTIONAL_FIELDS = ("team_tz", "bid_effort_hours", "capacity_hours")
+HOUR_FIELDS = ("bid_effort_hours", "capacity_hours")
 UNKNOWN = {"INCONNU", "UNKNOWN"}
+FALLBACK_ZONE = "Europe/Paris"
 
 
 def local_time(value: str, tz: str) -> datetime:
@@ -46,6 +50,63 @@ def missing(value: object) -> bool:
     )
 
 
+def valid_hours(value: object) -> bool:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    return math.isfinite(value) and value >= 0
+
+
+def format_hours(value: int | float) -> str:
+    if float(value) == 0:
+        return "0"
+    return f"{float(value):.2f}".rstrip("0").rstrip(".")
+
+
+def stated_hours(facts: dict, field: str) -> str | None:
+    if field not in facts:
+        return None
+    value = facts[field]
+    if valid_hours(value):
+        return format_hours(value)
+    return "INCONNU"
+
+
+def resolve_zone_name(facts: dict, target: str | None) -> str:
+    """Prefer an explicit clock zone, then a valid team_tz, then Europe/Paris."""
+    if target:
+        return target
+    stated = facts.get("team_tz")
+    if isinstance(stated, str) and not missing(stated):
+        try:
+            ZoneInfo(stated)
+        except ZoneInfoNotFoundError:
+            return FALLBACK_ZONE
+        return stated
+    return FALLBACK_ZONE
+
+
+def check_capacity(facts: dict, issues: list[str]) -> None:
+    if "team_tz" in facts:
+        value = facts["team_tz"]
+        if not isinstance(value, str):
+            issues.append("team_tz: expected an IANA timezone string")
+        elif missing(value):
+            issues.append("team_tz: missing or INCONNU/UNKNOWN")
+        else:
+            try:
+                ZoneInfo(value)
+            except ZoneInfoNotFoundError:
+                issues.append(f"team_tz: unknown IANA timezone {value}")
+    for field in HOUR_FIELDS:
+        if field not in facts:
+            continue
+        value = facts[field]
+        if isinstance(value, str) and missing(value):
+            issues.append(f"{field}: missing or INCONNU/UNKNOWN")
+        elif not valid_hours(value):
+            issues.append(f"{field}: expected a non-negative number of hours")
+
+
 def check_facts(facts: dict) -> list[str]:
     """Check the simple facts schema without a second runtime dependency."""
     issues = []
@@ -64,8 +125,10 @@ def check_facts(facts: dict) -> list[str]:
             issues.append(f"{field}: expected a string")
         elif field == "ai_tools_allowed" and value not in {"yes", "no", "silent"}:
             issues.append("ai_tools_allowed: expected yes, no or silent")
-    for field in sorted(set(facts) - set(FIELDS)):
+    known = set(FIELDS) | set(OPTIONAL_FIELDS)
+    for field in sorted(set(facts) - known):
         issues.append(f"{field}: unexpected field")
+    check_capacity(facts, issues)
     if not any(issue.startswith(("deadline_local:", "deadline_tz:")) for issue in issues):
         try:
             local_time(facts["deadline_local"], facts["deadline_tz"])
@@ -86,8 +149,9 @@ def hours_remaining(at: datetime, now: datetime) -> float:
     return (at.astimezone(timezone.utc) - now.astimezone(timezone.utc)).total_seconds() / 3600
 
 
-def render_brief(facts: dict, target: str = "Europe/Paris", now: str | None = None) -> str:
+def render_brief(facts: dict, target: str | None = None, now: str | None = None) -> str:
     issues = check_facts(facts)
+    target = resolve_zone_name(facts, target)
     zone = ZoneInfo(target)
     reference = local_time(now, target) if now is not None else datetime.now(zone)
 
@@ -128,6 +192,37 @@ def render_brief(facts: dict, target: str = "Europe/Paris", now: str | None = No
         validation.append("- Source is silent about AI tools; silence is not permission.")
     if status == "EXPIRED":
         validation.append("- Deadline has passed; do not assume an extension.")
+    stated_zone = facts.get("team_tz")
+    if (
+        isinstance(stated_zone, str)
+        and not missing(stated_zone)
+        and stated_zone != target
+    ):
+        try:
+            ZoneInfo(stated_zone)
+        except ZoneInfoNotFoundError:
+            pass
+        else:
+            validation.append(
+                f"- Team timezone in the facts is {stated_zone}; "
+                f"this brief's clock uses {target}."
+            )
+    capacity = []
+    if "team_tz" in facts:
+        shown = display("team_tz") if isinstance(facts.get("team_tz"), str) else "INCONNU"
+        capacity.append(f"- Team timezone: {shown}")
+    for field, label in (
+        ("bid_effort_hours", "Bid effort (hours)"),
+        ("capacity_hours", "Capacity (hours)"),
+    ):
+        shown = stated_hours(facts, field)
+        if shown is not None:
+            capacity.append(f"- {label}: {shown}")
+    if any(field in facts for field in HOUR_FIELDS):
+        capacity.append(
+            "- Elapsed hours remaining include nights and are not bid effort or capacity."
+        )
+    capacity_section = ["", "## Team and capacity", *capacity] if capacity else []
     return "\n".join(
         [
             f"# Opportunity brief: {display('name')}",
@@ -147,6 +242,7 @@ def render_brief(facts: dict, target: str = "Europe/Paris", now: str | None = No
             f"- Reference time ({target}): {reference:%Y-%m-%d %H:%M:%S %z}",
             f"- Hours remaining: {hours}",
             f"- Deadline status: {status}",
+            *capacity_section,
             "",
             "## Required deliverables",
             *items,
@@ -182,7 +278,14 @@ def main(argv: list[str] | None = None) -> int:
     brief = commands.add_parser("brief", help="Write a Markdown brief; leave the decision blank")
     brief.add_argument("facts")
     brief.add_argument("-o", "--output", required=True)
-    brief.add_argument("--to", default="Europe/Paris", help="Team timezone (default Europe/Paris)")
+    brief.add_argument(
+        "--to",
+        default=None,
+        help=(
+            "IANA timezone for the brief clock. Default: facts team_tz when that "
+            "is a valid zone, otherwise Europe/Paris"
+        ),
+    )
     brief.add_argument(
         "--now", help="Reference local time in the --to timezone; default: current time"
     )

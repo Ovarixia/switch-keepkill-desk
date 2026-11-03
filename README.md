@@ -15,7 +15,8 @@ cross-timezone deadline and missing facts visible, and a human decides whether
 to commit scarce business time. The fictional EUR 8400 supplier-intake RFP shows
 why this matters: **17:00 Europe/Paris is 11:00 America/Toronto**, with **66.83
 elapsed hours** left at the replay clock, six hours of bid effort and twelve
-available team hours. These are inputs to a human decision, not an automated
+available team hours. The brief labels team timezone, bid effort and capacity
+beside those elapsed hours. These are inputs to a human decision, not an automated
 profitability judgement. One historical Switch run proves the file handoff;
 tests and a generated brief prove the enhanced hours display. This is a practical
 Track 01 entry, not a claim of a contest win or measured commercial ROI.
@@ -57,7 +58,7 @@ failure criteria. All repository paths are relative to the clone root.
 5. Open a healthy local Switch/Docker server, sign in to Codex and import `templates/keepkill-desk.template.yaml`; create the Group with `team=ovx`.
 6. Keep separate sibling agent directories, Auto ON and Bypass OFF; make your clone's `.venv/bin/keepkill` available to the checker and inspect rendered instructions.
 7. Paste `fixtures/operations-rfp-source.txt` in intake with a unique marker; observe the scout's actual `facts.json` write and addressed handoff.
-8. Inspect the checker's three commands and real brief: both IANA zones, clock, hours, missing facts and pending gate. Live runs use the current clock.
+8. Inspect the checker's three commands and real brief: both IANA zones, clock, hours, labelled team timezone, bid effort and capacity when the source states them, missing facts and pending gate. Live runs use the current clock.
 9. Agents stop. The human reviews and records KEEP or KILL in Decisions. No automatic external action follows.
 
 Requirements: Python 3.11+ with IANA timezone data; PyYAML is the sole runtime
@@ -83,6 +84,11 @@ elapsed UTC hours, and `OPEN`, `DUE NOW`, `EXPIRED` or `INCONNU` deadline status
 Hours are rounded to two decimals; status uses the unrounded duration.
 Negative hours mean expired, not KILL. Elapsed hours include nights/weekends;
 they are not available working capacity. Recompute before making a real decision.
+When the facts include them, the brief adds **Team and capacity** with the team
+IANA zone, bid effort hours and capacity hours. If `--to` is omitted and
+`team_tz` is a valid IANA zone, that zone is the brief clock; otherwise the
+clock falls back to Europe/Paris. An explicit `--to` still overrides it, and a
+difference is reported without filling `Decision:`.
 
 DST-ambiguous and nonexistent local times are rejected rather than guessed.
 Invalid or missing deadline facts render `INCONNU` hours in the brief. `check`
@@ -93,8 +99,10 @@ returns 2 without overwriting the output. Briefs are identical for the same
 facts, target timezone and explicit `--now`.
 
 The [schema](schema/facts.schema.json) requires ten fields, including notes;
-`deliverables` is a nonempty list. The CLI also checks unknown markers, dates
-and zones. `ai_tools_allowed` is `yes`, `no` or `silent`; `silent` never means
+`deliverables` is a nonempty list. Optional `team_tz`, `bid_effort_hours` and
+`capacity_hours` are checked when present and printed as labelled brief facts.
+Omit them when the source does not state them; do not guess a number. The CLI
+also checks unknown markers, dates and zones. `ai_tools_allowed` is `yes`, `no` or `silent`; `silent` never means
 permission. Other missing facts use `INCONNU/UNKNOWN`. The tool checks supplied
 facts, not their external truth; all fixtures and `.invalid` URLs are synthetic.
 
