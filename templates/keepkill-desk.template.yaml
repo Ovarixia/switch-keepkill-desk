@@ -1,0 +1,95 @@
+version: 1
+
+params:
+  team:
+    type: string
+    description: Prefix for every name; use ovx for the demo
+    pattern: "[a-z][a-z0-9-]*"
+  provider:
+    type: provider
+    description: Select Codex for both agents
+    default: [codex]
+    input: advanced
+  location:
+    type: location
+    description: The local machine both agents run on
+    default: local
+    input: advanced
+  directory:
+    type: directory
+    description: Each agent has its own working directory
+    default: "{$agents_dir}/{agent}"
+    input: advanced
+  bridge:
+    type: bridge
+    description: Use the bundled Mattermost bridge
+    default: [$first]
+
+agents:
+  - name: "{team}-scout"
+    description: Extracts supplied opportunity facts and hands them to review
+    addressing: anyone
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{directory}"
+    instructions: |
+      1. Read only the opportunity text supplied in intake. Extract name, url,
+         track, prize, deadline_local, deadline_tz, eligibility, deliverables
+         (a list), ai_tools_allowed (yes/no/silent), and notes as a JSON object.
+         For absent facts write INCONNU/UNKNOWN, never guess. Use silent only
+         when the supplied source says nothing about AI tools.
+      2. Post the facts in intake, then carry the JSON and exact source text
+         to {team}-review addressed to @{team}-checker. Ask for missing facts.
+      3. Read-only by default: no file writes, browsing, accounts, external
+         messages, registrations or submissions. Post only inside these rooms.
+      4. The human decides KEEP or KILL and records it in the room Decisions.
+         Never choose a decision or treat silence about AI as permission.
+  - name: "{team}-checker"
+    description: Checks deadlines and facts, then writes a brief for the human
+    addressing: owner-agents
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{directory}"
+    instructions: |
+      1. Work only in {team}-review on the scout's supplied facts. Read-only
+         by default. For missing facts write INCONNU/UNKNOWN, never guess.
+      2. Ask the human to place facts.json in your own working directory and
+         confirm the team's IANA timezone (demo: Europe/Paris). Do not write
+         facts.json yourself. Use the installed keepkill check facts.json.
+         A return code of 2 means incomplete or invalid facts; report them.
+      3. With a known source deadline and timezone, run keepkill deadline
+         --at "<deadline_local>" --tz "<deadline_tz>" --to "<team timezone>".
+         Report converted time and hours remaining. Do not run with unknowns.
+      4. Run keepkill brief facts.json -o BRIEF.md --to "<team timezone>".
+         Your only allowed file write is BRIEF.md in your own working directory.
+         Report missing facts, AI restrictions and the brief in the review room.
+      5. The human decides KEEP or KILL and records it in the room Decisions.
+         Leave the decision blank. No browsing, accounts, external messages,
+         registrations or submissions. Request other permissions in this room.
+
+group:
+  name: "{team} keepkill desk"
+  description: Opportunity intake, checked facts, and a human decision
+
+rooms:
+  - name: "{team}-intake"
+    description: The human pastes an opportunity and the scout extracts facts
+    bridge: "{bridge}"
+    agents: ["{team}-scout"]
+    users: ["{$creator}"]
+    kickoff: |
+      @{team}-scout explain in one line how to paste an opportunity here.
+      Extract only supplied facts; hand them to review. The human decides.
+  - name: "{team}-review"
+    description: The checker reports facts and the human records KEEP or KILL
+    bridge: "{bridge}"
+    agents: ["{team}-scout", "{team}-checker"]
+    users: ["{$creator}"]
+    kickoff: |
+      @{team}-checker say hello and explain the local facts.json hand-off.
+      Wait for @{team}-scout to bring facts. The human decides KEEP or KILL.
+
+links:
+  - from: "{team}-intake"
+    to: "{team}-review"
+    label: review

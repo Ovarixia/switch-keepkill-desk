@@ -1,0 +1,12 @@
+{
+  "name": "Example without a deadline",
+  "url": "https://example.invalid/missing",
+  "track": "Business Workflow",
+  "prize": "No prize stated",
+  "deadline_local": "INCONNU",
+  "deadline_tz": "UNKNOWN",
+  "eligibility": "Adults; fictional example only",
+  "deliverables": ["README"],
+  "ai_tools_allowed": "silent",
+  "notes": "Ask the human for the source deadline and timezone."
+}

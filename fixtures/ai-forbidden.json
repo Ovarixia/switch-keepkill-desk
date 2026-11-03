@@ -1,0 +1,12 @@
+{
+  "name": "Example with AI tools forbidden",
+  "url": "https://example.invalid/no-ai",
+  "track": "Business Workflow",
+  "prize": "No cash prize",
+  "deadline_local": "2026-11-07 23:59",
+  "deadline_tz": "Asia/Kolkata",
+  "eligibility": "Adults; fictional example only",
+  "deliverables": ["Human-authored entry"],
+  "ai_tools_allowed": "no",
+  "notes": "Synthetic restriction for human review; no automatic decision."
+}

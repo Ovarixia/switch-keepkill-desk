@@ -1,0 +1,12 @@
+{
+  "name": "Example local workflow challenge",
+  "url": "https://example.invalid/challenge",
+  "track": "Business Workflow",
+  "prize": "USD 2000 (fictional example)",
+  "deadline_local": "2026-11-07 23:59",
+  "deadline_tz": "Asia/Kolkata",
+  "eligibility": "Adults; fictional example only",
+  "deliverables": ["Repository", "Demo video", "README"],
+  "ai_tools_allowed": "yes",
+  "notes": "Synthetic fixture; no external facts verified."
+}
